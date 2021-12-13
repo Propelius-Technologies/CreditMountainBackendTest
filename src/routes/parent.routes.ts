@@ -1,13 +1,15 @@
 import express from 'express';
-import authMiddlware from '../middleware/authMiddlware';
-import parentCtrl from '../controllers/parent.controller';
+import authMiddleware from '../middleware/authMiddlware';
+import ParentController from '../controllers/parent.controller';
 import parentVld from '../validators/userValidator';
 
 const router = express.Router();
 
-router.post('/', parentVld.addParentVld, parentCtrl.addParentCtrl);
-router.post('/login', parentVld.loginVld, parentCtrl.loginCtrl);
-router.get('/', authMiddlware.verifyToken, parentCtrl.getParentCtrl);
-router.put('/', authMiddlware.verifyToken, parentVld.updateParentVld, parentCtrl.updateParentCtrl);
+const parentController = new ParentController();
+
+router.post('/', parentVld.addParentVld, parentController.addParent);
+router.post('/login', parentVld.loginVld, parentController.login);
+router.get('/', authMiddleware.verifyToken, parentController.getParent);
+router.put('/', authMiddleware.verifyToken, parentVld.updateParentVld, parentController.updateParent);
 
 export default router;

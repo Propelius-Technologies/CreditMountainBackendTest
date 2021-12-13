@@ -1,16 +1,6 @@
-import path from 'path';
-
-import dotEnv from 'dotenv';
-
-import { getRepository } from 'typeorm';
-
-import jwt from 'jsonwebtoken';
-
-import ParentEntity from '../entities/Parent.entity';
+import { Request, Response } from "express";
 import ParentService from "../services/parent.service";
-
-dotEnv.config({ path: path.join(__dirname, `../env/.${process.env.NODE_ENV}.env`) });
-
+import ParentEntity from "../entities/Parent.entity";
 
 class ParentController {
 
@@ -20,63 +10,62 @@ class ParentController {
     this.service = new ParentService();
   }
 
-  addParentCtrl = async (req: any, res: any) => {
-    const user = await getRepository(ParentEntity).save({ ...req.body });
-    user.password = undefined;
-    res.status(200).json({
+  addParent = async (req: Request, res: Response) => {
+    const user = await this.service.createParent(req.body);
+
+    if(!user){
+      return res.status(400).json({
+        success: false,
+        message: 'User not created'
+      });
+    }
+
+    return res.status(200).json({
       success: true,
       message: 'Your profile registered successfully!',
       data: user,
     });
   };
 
-  loginCtrl = async (req: any, res: any) => {
+  login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
-    /** Find user with email */
-    const user = await getRepository(ParentEntity).findOne({
-      where: { email },
-      select: ['id', 'password', 'email', 'fullName'],
-    });
-    if (!user)
-      return res.status(422).json({
-        success: true,
-        message: 'Record not found with this email.',
-      });
+    const data = await this.service.login(email, password);
 
-    /** Match password */
-    const isMatch = await user.validatePassword(password);
-    if (!isMatch)
-      return res.status(422).json({
-        success: true,
+    if(!data){
+      return res.status(400).json({
+        success: false,
         message: 'Invalid email or password',
       });
+    }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Your profile registered successfully!',
-      token: jwt.sign({ userId: user.id }, `${process.env.JWT_SECRET}`),
-      data: user,
+      token: data.token,
+      data: data.user,
     });
   }
 
-  updateParentCtrl = async (req: any, res: any) => {
+  updateParent = async (req: Request & {user?: ParentEntity}, res: Response) => {
     const { email, fullName } = req.body;
 
-    await this.service.updateParent(req.user.id,  email, fullName );
+    await this.service.updateParent(req?.user?.id || 0,  email, fullName );
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Your profile updated successfully!',
     });
   }
 
-  getParentCtrl = async (req: any, res: any) => {
-    const user = await this.service.getParent(req.user.id);
+  getParent = async (req: Request & {user?: ParentEntity}, res: Response) => {
+    const user = await this.service.getParent(req?.user?.id || 0);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: user,
     });
-  },
-};
+  }
+}
+
+export default ParentController;
