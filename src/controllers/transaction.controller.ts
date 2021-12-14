@@ -12,7 +12,7 @@ class TransactionController {
     res.json(await this.service.getAllTransactions(+req.params.cardId));
 
   getTransaction = async (req: Request, res: Response) => {
-    const transaction = await this.service.getTransaction(+req.params.cardId);
+    const transaction = await this.service.getTransaction(+req.params.transactionId);
 
     if (!transaction) {
       return res.status(404).json({
@@ -28,10 +28,10 @@ class TransactionController {
   };
 
   createCharge = async (req: Request, res: Response) => {
-    const { amount } = req.body;
+    const { amount, notes } = req.body;
     const { cardId } = req.params;
 
-    const charge = await this.service.createCharge(+cardId, amount);
+    const charge = await this.service.createCharge(+cardId, amount, notes);
 
     if (!charge) {
       return res.status(400).json({

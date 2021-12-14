@@ -1,14 +1,28 @@
 import express from 'express';
-import authMiddlware from '../middleware/authMiddlware';
-import parentVld from '../validators/userValidator';
-import childCtrl from '../controllers/child.controller';
+import authMiddleware from '../middleware/auth.middleware';
+import TransactionController from '../controllers/transaction.controller';
+import TransactionsValidator from '../validators/transactions.validator';
 
 const router = express.Router();
 
-router.post('/', authMiddlware.verifyToken, parentVld.addChild, childCtrl.addChildCtrl);
-router.get('/', authMiddlware.verifyToken, childCtrl.getAllChildCtrl);
-router.get('/:id', authMiddlware.verifyToken, childCtrl.getSingleChildCtrl);
-router.put('/:id', authMiddlware.verifyToken, parentVld.addChild, childCtrl.updateChildCtrl);
-router.delete('/:id', authMiddlware.verifyToken, childCtrl.deleteChildCtrl);
+const transactionController = new TransactionController();
+const transactionValidator = new TransactionsValidator();
+
+router.post(
+  '/:cardId/transactions',
+  authMiddleware.verifyToken,
+  transactionValidator.createCharge(),
+  transactionController.createCharge,
+);
+router.get(
+  '/:cardId/transactions',
+  authMiddleware.verifyToken,
+  transactionController.getAllTransactions,
+);
+router.get(
+  '/:cardId/transactions/:transactionId',
+  authMiddleware.verifyToken,
+  transactionController.getTransaction,
+);
 
 export default router;

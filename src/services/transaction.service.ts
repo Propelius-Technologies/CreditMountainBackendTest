@@ -10,7 +10,7 @@ class TransactionService {
 
   getAllTransactions = async (cardId: number) => {
     try {
-      return await TransactionEntity.find({ where: { cardId } });
+      return await TransactionEntity.find({ where: { card: cardId }, relations: ['card'] });
     } catch (e) {
       return [];
     }
@@ -18,13 +18,13 @@ class TransactionService {
 
   getTransaction = async (transactionId: number) => {
     try {
-      return await TransactionEntity.findOne({ where: { id: transactionId } });
+      return await TransactionEntity.findOne({ where: { id: transactionId }, relations: ['card'] });
     } catch (e) {
       return null;
     }
   };
 
-  createCharge = async (cardId: number, amount: number) => {
+  createCharge = async (cardId: number, amount: number, notes: string) => {
     try {
       const card = await this.cardService.getCard(cardId);
 
@@ -32,8 +32,17 @@ class TransactionService {
         return null;
       }
 
-      const transaction = TransactionEntity.create({ charge: amount, card });
-      return await transaction.save();
+      if (card.monthlyLimit < amount) {
+        return false;
+      }
+
+      const transaction = TransactionEntity.create({ amount, notes: notes || '', card });
+      await transaction.save();
+
+      card.monthlyLimit -= amount;
+      await card.save();
+
+      return transaction;
     } catch (e) {
       return null;
     }

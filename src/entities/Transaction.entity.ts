@@ -26,13 +26,10 @@ export default class TransactionEntity extends BaseEntity {
   deletedAt?: Date;
 
   @Column('int')
-  charge: number;
-
-  @Column({ select: false })
-  password: string;
+  amount: number;
 
   @Column()
-  email: string;
+  notes: string;
 
   @ManyToOne('CardEntity', (card: CardEntity) => card.transactions)
   @JoinColumn()
