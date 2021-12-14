@@ -7,9 +7,9 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
-import CardEntity from "./Card.entity";
+  UpdateDateColumn,
+} from 'typeorm';
+import CardEntity from './Card.entity';
 
 @Entity({ name: 'transactions' })
 export default class TransactionEntity extends BaseEntity {
@@ -36,5 +36,5 @@ export default class TransactionEntity extends BaseEntity {
 
   @ManyToOne('CardEntity', (card: CardEntity) => card.transactions)
   @JoinColumn()
-  card: CardEntity
+  card: CardEntity;
 }

@@ -1,56 +1,63 @@
-import { Request, Response } from "express";
-import CardService from "../services/card.service";
+import { Request, Response } from 'express';
+import CardService from '../services/card.service';
 
 class CardController {
-  private service: CardService
+  private service: CardService;
 
   constructor() {
-    this.service = new CardService()
+    this.service = new CardService();
   }
 
-  async getAllCards(req: Request, res: Response) {
-    const {childId} = req.params
+  getAllCards = async (req: Request, res: Response) => {
+    const { childId } = req.params;
 
-    const cards = await this.service.getAllCards(+childId)
+    const cards = await this.service.getAllCards(+childId);
 
-    return res.json(cards)
-  }
+    return res.json(cards);
+  };
 
-  async getCard(req: Request, res: Response) {
-    const { cardId} = req.params
+  getCard = async (req: Request, res: Response) => {
+    const { cardId } = req.params;
 
-    const card = await this.service.getCard(+cardId)
+    const card = await this.service.getCard(+cardId);
 
-    return res.json(card)
-  }
+    if (!card) {
+      return res.status(404).json({ message: 'Card not found' });
+    }
 
-  async createCard(req: Request, res: Response) {
-    const card = req.body
-    const { childId } = req.params
+    return res.json(card);
+  };
 
-    const newCard = await this.service.createCard(+childId, card)
+  createCard = async (req: Request, res: Response) => {
+    const card = req.body;
+    const { childId } = req.params;
 
-    return res.json(newCard)
-  }
+    const newCard = await this.service.createCard(+childId, card);
 
-  async updateCard(req: Request, res: Response) {
-    const {monthlyLimit} = req.body
-    const { cardId } = req.params
+    return res.json(newCard);
+  };
 
-    const updatedCard = await this.service.updateCard(+cardId, monthlyLimit)
+  updateCard = async (req: Request, res: Response) => {
+    const { monthlyLimit } = req.body;
+    const { cardId } = req.params;
 
-    return res.json(updatedCard)
-  }
-
-  async deleteCard (req: Request, res: Response) {
-    const { cardId } = req.params
-
-    await this.service.deleteCard(+cardId)
+    await this.service.updateCard(+cardId, monthlyLimit);
 
     return res.json({
-      message: "Card deleted"
-    })
-  }
+      message: 'Card updated successfully',
+      success: true,
+    });
+  };
+
+  deleteCard = async (req: Request, res: Response) => {
+    const { cardId } = req.params;
+
+    await this.service.deleteCard(+cardId);
+
+    return res.json({
+      message: 'Card deleted',
+    });
+  };
 }
 
-export default CardController
+export default CardController;

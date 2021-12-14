@@ -1,19 +1,10 @@
 import 'reflect-metadata';
-
 import express from 'express';
-
 import { createConnection } from 'typeorm';
-
 import path from 'path';
-
 import dotEnv from 'dotenv';
-
 import morgan from 'morgan';
-
-import bodyParser from 'body-parser';
-
 import apiRouter from './routes';
-
 import { DEV } from './constants';
 
 const main = async () => {
@@ -22,8 +13,7 @@ const main = async () => {
   // typeorm db connection
   await createConnection({
     type: 'postgres',
-    ssl: true,
-    extra: { ssl: { rejectUnauthorized: false } },
+    // extra: { ssl: { rejectUnauthorized: false } },
     host: process.env.DBHOST,
     username: process.env.DBUSER,
     logging: DEV,
@@ -42,8 +32,8 @@ const main = async () => {
 
   app.use(morgan('dev'));
 
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json());
+  app.use(express.urlencoded({ extended: false }));
+  app.use(express.json());
 
   app.use('/api', apiRouter);
 

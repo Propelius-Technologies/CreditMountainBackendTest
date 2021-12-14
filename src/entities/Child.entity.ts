@@ -5,13 +5,14 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne, OneToMany,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
+  UpdateDateColumn,
+} from 'typeorm';
 
 import type ParentEntity from './Parent.entity';
-import type CardEntity from "./Card.entity";
+import type CardEntity from './Card.entity';
 
 @Entity({ name: 'children' })
 export default class ChildEntity extends BaseEntity {
@@ -41,6 +42,5 @@ export default class ChildEntity extends BaseEntity {
   parent: ParentEntity;
 
   @OneToMany('CardEntity', (card: CardEntity) => card.child)
-  @Column()
   cards: CardEntity[];
 }

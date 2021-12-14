@@ -15,15 +15,17 @@ export default {
       .custom(async (email: string): Promise<any> => {
         const user = await getRepository(ParentEntity).findOne({ email });
         if (user) {
+          // eslint-disable-next-line prefer-promise-reject-errors
           return Promise.reject('Email already exist in our records.');
         }
+        return true;
       }),
     check('password')
       .notEmpty()
       .withMessage('Password is required.')
       .bail()
       .isLength({ min: 8 })
-      .withMessage('Password must be eitht characters long.'),
+      .withMessage('Password must be eight characters long.'),
     check('fullName').notEmpty().withMessage('Full name is required.'),
     (req: any, res: any, next: any) => {
       baseValidator(req, res, next);
@@ -41,8 +43,10 @@ export default {
       .custom(async (email: string, { req }): Promise<any> => {
         const user = await getRepository(ParentEntity).findOne({ email, id: Not(req.user.id) });
         if (user) {
+          // eslint-disable-next-line prefer-promise-reject-errors
           return Promise.reject('Email already exist in our records.');
         }
+        return true;
       }),
     check('fullName').notEmpty().withMessage('Full name is required.'),
     (req: any, res: any, next: any) => {
@@ -62,7 +66,7 @@ export default {
       .withMessage('Password is required.')
       .bail()
       .isLength({ min: 8 })
-      .withMessage('Password must be eitht characters long.'),
+      .withMessage('Password must be eight characters long.'),
     (req: any, res: any, next: any) => {
       baseValidator(req, res, next);
     },

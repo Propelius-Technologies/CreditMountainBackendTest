@@ -1,5 +1,5 @@
 import express from 'express';
-import authMiddleware from '../middleware/authMiddlware';
+import authMiddleware from '../middleware/auth.middleware';
 import ParentController from '../controllers/parent.controller';
 import parentVld from '../validators/userValidator';
 
@@ -10,6 +10,11 @@ const parentController = new ParentController();
 router.post('/', parentVld.addParentVld, parentController.addParent);
 router.post('/login', parentVld.loginVld, parentController.login);
 router.get('/', authMiddleware.verifyToken, parentController.getParent);
-router.put('/', authMiddleware.verifyToken, parentVld.updateParentVld, parentController.updateParent);
+router.put(
+  '/',
+  authMiddleware.verifyToken,
+  parentVld.updateParentVld,
+  parentController.updateParent,
+);
 
 export default router;

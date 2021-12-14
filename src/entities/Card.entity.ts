@@ -5,12 +5,13 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne, OneToMany,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
-import type ChildEntity from "./Child.entity";
-import type TransactionEntity from "./Transaction.entity";
+  UpdateDateColumn,
+} from 'typeorm';
+import type ChildEntity from './Child.entity';
+import type TransactionEntity from './Transaction.entity';
 
 @Entity({ name: 'cards' })
 export default class CardEntity extends BaseEntity {

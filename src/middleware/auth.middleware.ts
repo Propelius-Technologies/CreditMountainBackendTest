@@ -26,6 +26,7 @@ export default {
         token.replace('Bearer ', ''),
         `${process.env.JWT_SECRET}`,
       );
+
       const user = await getRepository(ParentEntity).findOne({ id: Object(verifyToken).userId });
       if (!user) {
         return res.status(401).json({
@@ -34,7 +35,7 @@ export default {
         });
       }
       req.user = user;
-      next();
+      return next();
     } catch (err) {
       return res.status(401).json({
         success: false,

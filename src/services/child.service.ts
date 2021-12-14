@@ -1,30 +1,30 @@
-import { getRepository } from "typeorm";
-import ChildEntity from "../entities/Child.entity";
+import { getRepository } from 'typeorm';
+import ChildEntity from '../entities/Child.entity';
 
 class ChildService {
   createChild = async (parentId: number, child: ChildEntity) => {
-    try{
+    try {
       return await getRepository(ChildEntity).save({ ...child, parentId });
-    }catch (e){
-      return null
+    } catch (e) {
+      return null;
     }
   };
 
   getAllChildren = async (parentId: number) => {
-    try{
+    try {
       return await getRepository(ChildEntity).find({ where: { parentId } });
-    }catch (e){
-      return []
+    } catch (e) {
+      return [];
     }
   };
 
   getChild = async (childId: number) => {
-    try{
+    try {
       return await getRepository(ChildEntity).findOne(childId);
-    }catch (e){
-      return null
+    } catch (e) {
+      return null;
     }
-  }
+  };
 
   updateChild = async (childId: number, age: number, fullName: string) => {
     try {
@@ -32,22 +32,15 @@ class ChildService {
     } catch (e) {
       return null;
     }
-  }
+  };
 
   deleteChild = async (childId: number) => {
-    try{
-      const child = await this.getChild(childId);
-
-      if(!child){
-        return null
-      }
-
-      return await getRepository(ChildEntity).softDelete(child);
-    }catch (e){
-      return null
+    try {
+      return await getRepository(ChildEntity).delete(childId);
+    } catch (e) {
+      return null;
     }
-  }
-
+  };
 }
 
-export default ChildService
+export default ChildService;
